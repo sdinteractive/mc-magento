@@ -310,15 +310,20 @@ class Ebizmarts_MailChimp
 
     public function call($url,$params,$method=Ebizmarts_MailChimp::GET,$encodeJson=true)
     {
-        if (count($params) && $encodeJson && $method!=Ebizmarts_MailChimp::GET) {
+        $hasParams = true;
+        if (is_array($params) && count($params) === 0 || $params == null) {
+            $hasParams = false;
+        }
+
+        if ($hasParams && $encodeJson && $method!=Ebizmarts_MailChimp::GET) {
             $params = json_encode($params);
         }
 
         $ch = $this->_ch;
-        if (count($params)&&$method!=Ebizmarts_MailChimp::GET) {
+        if ($hasParams && $method != Ebizmarts_MailChimp::GET) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, $params);
         } else {
-            if (count($params)) {
+            if ($hasParams) {
                 $_params = http_build_query($params);
                 $url .= '?' . $_params;
             }
